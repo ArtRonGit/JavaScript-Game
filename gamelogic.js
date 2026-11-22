@@ -19,6 +19,9 @@ let enemyBulletsSpeed = 350;
 //End of the game if "false" -> the player is alive, if true, than the player is dead
 let gameOver = false;
 
+let score = 0;
+document.getElementById("score").textContent = "SCORE " + score;
+
 
 
 
@@ -304,6 +307,10 @@ function gameLoop(time) {
 
             //Kill the playet
             playerDeath();
+            if (gameOver)
+            {
+                return;
+            }
 
             break;
         }
@@ -326,18 +333,14 @@ function gameLoop(time) {
                 enemy.element.remove();
                 enemies.splice(j, 1);
 
+                //Add +100 and update the score to display the correct value
+                score += 100;
+                document.getElementById("score").textContent = "SCORE " + score;
                 break;
             }
-        }
+        }   
     }
     requestAnimationFrame(gameLoop);
 }
 requestAnimationFrame(gameLoop);
-<<<<<<< HEAD
-    
-
-=======
->>>>>>> c73074b37e2d2e16b303b4ac685220d2d9a06fbb
-
-
 
