@@ -293,9 +293,9 @@ function gameLoop(time) {
             }
         }
     }
-}
     requestAnimationFrame(gameLoop);
-
+}
+requestAnimationFrame(gameLoop);
 
 
 
