@@ -33,4 +33,48 @@
 }
 body {
     overflow: hidden;
+    margin: 0;
+    background: white;
+    font-family: Arial, sans-serif;
+}
+
+#score {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: black;
+    font-size: 24px;
+}
+
+#startScreen {
+    position: fixed;
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#startScreen h1 {
+    color: #d0baff;
+    text-align: center;
+}
+
+#startButton {
+    padding: 12px 35px;
+    font-size: 17px;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#startButton:hover {
+    background: #8972c7;
 }
