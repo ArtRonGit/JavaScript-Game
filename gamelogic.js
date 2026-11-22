@@ -17,7 +17,8 @@ let enemySpawnDelay = 2000;
 let enemyBullets = [];
 let enemyBulletsSpeed = 350;
 
-
+let score = 0;
+document.getElementById("score").textContent = "SCORE " + score;
 
 
 let keys = {};
@@ -159,8 +160,8 @@ function gameLoop(time) {
 
     let dx = 0;
     let dy = 0;
-    
 
+// LUKASZ MOVEMENT ------
     // basic movement
     if (keys["w"]) dy -= 1;
     if (keys["s"]) dy += 1;
@@ -178,21 +179,15 @@ function gameLoop(time) {
     box.style.left = x + "px"; 
     box.style.top = y + "px"; 
 
-
-
-    
-
     x = Math.max(0, Math.min (window.innerWidth - box.offsetWidth, x)); // Left / Right wall 
     y = Math.max(0, Math.min (window.innerHeight - box.offsetHeight, y)); // Up / Down wall
-
-
-
 
     // shooting 
     if (time - lastShot >= shootDelay) {
         shoot();
         lastShot = time;
     }
+// LUKASZ MOVEMENT ------ END
 
     // move projectiles 
     for (let i = playerprojectile.length - 1; i >= 0; i--) {
@@ -221,8 +216,6 @@ function gameLoop(time) {
         enemySpawnDelay = 305;
     }
     
-
-
     // Move enemies
     for (let i = enemies.length - 1; i >= 0; i--) 
     {
@@ -271,6 +264,7 @@ function gameLoop(time) {
             enemyBullets.splice(i, 1);
         }
     }
+
     //Player bullet collision with enemies
     for (let i = playerprojectile.length - 1; i >= 0; i--)
     {
@@ -281,6 +275,7 @@ function gameLoop(time) {
             let enemy = enemies[j];
             if (checkCollision(bullet.element, enemy.element))
             {
+                
                 //Remove player bullet
                 bullet.element.remove();
                 playerprojectile.splice(i,1);
@@ -288,7 +283,9 @@ function gameLoop(time) {
                 //Remove enemy(One shot killing him)
                 enemy.element.remove();
                 enemies.splice(j, 1);
-
+                //Add +100 and update the score to display the correct value
+                score += 100;
+                document.getElementById("score").textContent = "SCORE " + score;
                 break;
             }
         }
