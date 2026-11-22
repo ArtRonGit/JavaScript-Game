@@ -22,7 +22,9 @@ let gameOver = false;
 let score = 0;
 document.getElementById("score").textContent = "SCORE " + score;
 
-
+let playerName = "";
+let leaderboard = JSON.parse(
+    localStorage.getItem("leaderboard")) || [];
 
 
 
@@ -153,8 +155,17 @@ function playerDeath()
 {
     gameOver = true;
 
+      saveScore();
+
+     document.getElementById("startScreen").style.display = "flex";
+
+    document.getElementById("startButton").textContent = "PLAY AGAIN";
+
+       showLeaderboard();
+
+
     //Remove player of the screen
-    box.remove;
+    box.style.display = "none";
 
     console.log("Game over")
 }
@@ -336,11 +347,97 @@ function gameLoop(time) {
                 //Add +100 and update the score to display the correct value
                 score += 100;
                 document.getElementById("score").textContent = "SCORE " + score;
+            
+
                 break;
             }
-        }   
+        }
     }
+
     requestAnimationFrame(gameLoop);
 }
-requestAnimationFrame(gameLoop);
 
+function saveScore()
+{
+    leaderboard.push({
+        name: playerName,
+        score: score
+    });
+
+    localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+}
+
+function startGame()
+{
+    let input = document.getElementById("playerName");
+
+    if (input.value === "")
+    {
+        alert("Enter your name!");
+        return;
+    }
+
+    playerName = input.value;
+
+    // Reset game
+    gameOver = false;
+    score = 0;
+    x = 100;
+    y = 100;
+
+    document.getElementById("score").textContent = "SCORE 0";
+
+    // Remove old enemies and bullets
+    for (let enemy of enemies)
+    {
+        enemy.element.remove();
+    }
+
+    for (let bullet of playerprojectile)
+    {
+        bullet.element.remove();
+    }
+
+    for (let bullet of enemyBullets)
+    {
+        bullet.element.remove();
+    }
+
+    enemies = [];
+    playerprojectile = [];
+    enemyBullets = [];
+    keys = {};
+
+    enemySpawnDelay = 2000;
+
+    lastFrameTime = performance.now();
+    lastEnemySpawn = lastFrameTime;
+    lastShot = lastFrameTime;
+
+    box.style.display = "block";
+    box.style.left = x + "px";
+    box.style.top = y + "px";
+
+    document.getElementById("startScreen").style.display = "none";
+
+    requestAnimationFrame(gameLoop);
+}
+
+    function showLeaderboard()
+{
+    let list = document.getElementById("leaderboardList");
+    list.innerHTML = "";
+
+    for (let i = leaderboard.length - 1; i >= 0 && i >= leaderboard.length - 5; i--)
+    {
+        let item = document.createElement("li");
+
+        item.textContent =
+            leaderboard[i].name + " - " + leaderboard[i].score;
+
+        list.appendChild(item);
+    }
+}
+
+document.getElementById("startButton").addEventListener("click", startGame);
+showLeaderboard();

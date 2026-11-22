@@ -4,7 +4,25 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
+    <div id="startScreen">
+        <h1>CRAZY SIGMA 67 BULLET HELL</h1>
+                <input type="text" id="playerName"
+               placeholder="Enter your name" maxlength="15">
+                 <button id="startButton">START GAME</button>
+                 <div class="menuPanels">
+            <div class="menuPanel">
+                <h2>Leaderboard</h2>
+                <ol id="leaderboardList"></ol>
+            </div>
+              <div class="menuPanel">
+                <h2>Controls</h2>
+        <img src="images/movement_picutre.png"
+         alt="Movement and slow mode controls"
+         class="controls-image">
+         <p>PLAY AS CRAZY RED SQUARE ON ENEMY BLOCK TO KILL STUPID BATS, DESTROY THEIR POPULATION AS HARD AS POSSIBLE!</p>
+            </div>
+        </div>
+    </div>
     <div id="score">SCORE 0</div>
     <div id="box"></div>
     <script src="gamelogic.js"></script>
