@@ -13,6 +13,9 @@ let lastFrameTime = 0;
 let enemies = [];
 let lastEnemySpawn = 0;
 let enemySpawnDelay = 2000;
+//enemies bullets
+let enemyBullets = [];
+let enemyBulletsSpeed = 350;
 
 
 
@@ -42,7 +45,7 @@ function shoot()
 
     document.body.appendChild(bullet);
 
-    // Moving the bullet
+    // Putting bullet in the array
 
     playerprojectile.push({
         element: bullet,
@@ -58,18 +61,86 @@ function spawnEnemy()
     enemy.classList.add("enemy");
     // Add to the HTML BODY
     document.body.appendChild(enemy);
-    enemy.style.left = window.innerWidth - 50 + "px";
-    enemy.style.top = Math.random() * (window.innerHeight - 50) + "px";
 
-    enemies.push(
+    //Enemy start position
+
+    let enemyX = window.innerWidth;
+    let enemyY = Math.random() * (window.innerHeight - enemy.offsetHeight)
+
+    enemy.style.left = enemyX + "px";
+    enemy.style.top = enemyY + "px";
+
+    // Store enemy data in the array 
+    enemies.push
+    (
         {
             element: enemy,
-            x: window.innerWidth,
-            speed: 200
+            x: enemyX,
+            y: enemyY,
+            speed: 200,
+            lastShot: 0,
+            shootDelay:1500
         }
     );
+
+    //
 }
 
+// Checking if one square above another. 
+function checkCollision(bullet, enemy)
+{
+    let bulletRec = bullet.getBoundingClientRect()
+    let enemyRec = enemy.getBoundingClientRect();
+
+    //Return give us True of false 
+return (
+    bulletRec.left < enemyRec.right &&
+    bulletRec.right > enemyRec.left &&
+    bulletRec.top < enemyRec.bottom &&
+    bulletRec.bottom > enemyRec.top
+);
+}
+
+function enemyShoot(enemy)
+{
+    let bullet = document.createElement("div");
+    bullet.classList.add("enemyprojectile")
+    document.body.appendChild(bullet);
+
+    //Starting position of the bullet 
+    let bulletX = enemy.x - 10;
+    let bulletY = enemy.y + enemy.element.offsetHeight / 2;
+
+    //Player Position
+    let targetX = x + box.offsetWidth / 2;
+    let targetY = y + box.offsetHeight / 2;
+
+    //Direction to the player from enemy
+    let directionX = targetX - bulletX;
+    let directionY = targetY - bulletY;
+
+    // Theorema Pithagora 
+    let distance = Math.hypot(directionX, directionY)
+
+    //If the bullet touches the player,than we delete the bullet
+    if (distance === 0)
+    {
+        bullet.remove();
+        return;
+    }
+
+    // Store the bullet in the enemy bullet array
+    enemyBullets.push
+    ({
+        element: bullet,
+        x: bulletX,
+        y: bulletY,
+        velocityX: directionX / distance * enemyBulletsSpeed,
+        velocityY: directionY / distance * enemyBulletsSpeed
+    });
+    bullet.style.left = bulletX + "px";
+    bullet.style.top = bulletY + "px";
+}
 
 
 function gameLoop(time) {
@@ -158,21 +229,73 @@ function gameLoop(time) {
     let enemy = enemies[i];
 
     enemy.x -= enemy.speed * deltaTime;
-
     enemy.element.style.left = enemy.x + "px";
+
+    //Remove enemy if it leaves the screen
         if (enemy.x < -50) 
     {
         enemy.element.remove();
         enemies.splice(i, 1);
+        continue;
     }
+
+    //Enemy Shooting
+    if (time - enemy.lastShot >= enemy.shootDelay)
+    {
+        enemyShoot(enemy);
+        enemy.lastShot = time;
     }
-
-
-
-
-
-    requestAnimationFrame(gameLoop);
 }
+    
+    // Move enemy bullets
+    for(let i = enemyBullets.length - 1; i >= 0; i--)
+    {
+        let bullet = enemyBullets[i];
+
+        bullet.x += bullet.velocityX * deltaTime;
+        bullet.y += bullet.velocityY * deltaTime;
+
+        bullet.element.style.left = bullet.x + "px";
+        bullet.element.style.top = bullet.y + "px";
+
+        //Checking if the bullet is out of the screen
+        if(
+            bullet.x < -10 ||
+            bullet.x > window.innerWidth ||
+            bullet.y < -10 ||
+            bullet.y > window.innerHeight
+        )
+        // Bullet enemy remove the div and enemy bullet splice remove it from array
+        {
+            bullet.element.remove();
+            enemyBullets.splice(i, 1);
+        }
+    }
+    //Player bullet collision with enemies
+    for (let i = playerprojectile.length - 1; i >= 0; i--)
+    {
+        let bullet = playerprojectile[i];
+
+        for(let j = enemies.length - 1; j >= 0; j--)
+        {
+            let enemy = enemies[j];
+            if (checkCollision(bullet.element, enemy.element))
+            {
+                //Remove player bullet
+                bullet.element.remove();
+                playerprojectile.splice(i,1);
+
+                //Remove enemy(One shot killing him)
+                enemy.element.remove();
+                enemies.splice(j, 1);
+
+                break;
+            }
+        }
+    }
+}
+    requestAnimationFrame(gameLoop);
 
 
-requestAnimationFrame(gameLoop);
+
+
