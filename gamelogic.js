@@ -16,6 +16,9 @@ let enemySpawnDelay = 2000;
 //enemies bullets
 let enemyBullets = [];
 let enemyBulletsSpeed = 350;
+//End of the game if "false" -> the player is alive, if true, than the player is dead
+let gameOver = false;
+
 
 let score = 0;
 document.getElementById("score").textContent = "SCORE " + score;
@@ -123,7 +126,7 @@ function enemyShoot(enemy)
     // Theorema Pithagora 
     let distance = Math.hypot(directionX, directionY)
 
-    //If the bullet touches the player,than we delete the bullet
+    // Prevent division by zero
     if (distance === 0)
     {
         bullet.remove();
@@ -143,8 +146,25 @@ function enemyShoot(enemy)
     bullet.style.top = bulletY + "px";
 }
 
+// Death of the player
+function playerDeath()
+{
+    gameOver = true;
+
+    //Remove player of the screen
+    box.remove;
+
+    console.log("Game over")
+}
+
 
 function gameLoop(time) {
+    // Close the game
+    if(gameOver)
+    {
+        return;
+    }
+
     deltaTime = (time - lastFrameTime) / 1000;
     lastFrameTime = time;
 
@@ -293,6 +313,8 @@ function gameLoop(time) {
     requestAnimationFrame(gameLoop);
 }
 requestAnimationFrame(gameLoop);
+    
+
 
 
 
