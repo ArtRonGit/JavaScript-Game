@@ -1,3 +1,7 @@
+//Game logic by Artur and Lukasz
+//Score, Start screen, saving the scores to json by Danil 
+//Images, concept of the game, spawn enemy script by Jakub
+
 let box = document.getElementById("box");
 
 let x = 100;
@@ -26,16 +30,14 @@ let playerName = "";
 let leaderboard = JSON.parse(
     localStorage.getItem("leaderboard")) || [];
 
-
-
 let keys = {};
 
 // shooting settings
-let shootDelay = 120;      // ms between shots while holding J
+let shootDelay = 120;      // ms between shots
 let lastShot = 0;
 let projectileSpeed = 720;
 
-// KEYBOARD DETECTOR
+// KEYBOARD DETECTOR 
 document.addEventListener("keydown", function(event) {
     keys[event.key.toLowerCase()] = true;
 });
@@ -54,7 +56,6 @@ function shoot()
     document.body.appendChild(bullet);
 
     // Putting bullet in the array
-
     playerprojectile.push({
         element: bullet,
         x: x + box.offsetWidth,
@@ -90,8 +91,6 @@ function spawnEnemy()
             shootDelay:1500
         }
     );
-
-    //
 }
 
 // Checking if one square above another. 
@@ -163,14 +162,11 @@ function playerDeath()
 
        showLeaderboard();
 
-
     //Remove player of the screen
     box.style.display = "none";
 
     console.log("Game over")
 }
-
-
 function gameLoop(time) {
     // Close the game
     if(gameOver)
@@ -194,33 +190,25 @@ function gameLoop(time) {
     let dx = 0;
     let dy = 0;
     
-
-    // basic movement
+    // basic movement 
     if (keys["w"]) dy -= 1;
     if (keys["s"]) dy += 1;
     if (keys["a"]) dx -= 1;
     if (keys["d"]) dx += 1;
 
-    // diagonal movement
+    // diagonal movement 
     if (dx !== 0 && dy !== 0) {
     dx *= 0.77;
     dy *= 0.77;
     }
     x += dx * speed * deltaTime;
     y += dy * speed * deltaTime;
-    // move player box
+
+    // move player box 
     box.style.left = x + "px"; 
     box.style.top = y + "px"; 
-
-
-
-    
-
     x = Math.max(0, Math.min (window.innerWidth - box.offsetWidth, x)); // Left / Right wall 
     y = Math.max(0, Math.min (window.innerHeight - box.offsetHeight, y)); // Up / Down wall
-
-
-
 
     // shooting 
     if (time - lastShot >= shootDelay) {
@@ -236,7 +224,7 @@ function gameLoop(time) {
 
         p.element.style.left = p.x + "px";
         p.element.style.top = p.y + "px";
-
+        //if it leaves the window -> delete projectile 
         if (p.x > window.innerWidth) {
             p.element.remove();
             playerprojectile.splice(i, 1);
@@ -254,9 +242,6 @@ function gameLoop(time) {
     {
         enemySpawnDelay = 305;
     }
-    
-
-
     // Move enemies
     for (let i = enemies.length - 1; i >= 0; i--) 
     {
@@ -280,8 +265,7 @@ function gameLoop(time) {
         enemy.lastShot = time;
     }
 }
-    
-    // Move enemy bullets
+    // Move enemy bullets 
     for(let i = enemyBullets.length - 1; i >= 0; i--)
     {
         let bullet = enemyBullets[i];
@@ -306,7 +290,7 @@ function gameLoop(time) {
         }
     }
 
-    // ENEMY BULLET COLLISION WITH PLAYER 
+    // ENEMY BULLET COLLISION WITH PLAYER
     for (let i = enemyBullets.length - 1; i >= 0; i--)
     {
         let bullet = enemyBullets[i];
@@ -316,7 +300,7 @@ function gameLoop(time) {
             bullet.element.remove();
             enemyBullets.splice(i, 1);
 
-            //Kill the playet
+            //Kill the player 
             playerDeath();
             if (gameOver)
             {
@@ -356,7 +340,7 @@ function gameLoop(time) {
 
     requestAnimationFrame(gameLoop);
 }
-
+//Save score in array
 function saveScore()
 {
     leaderboard.push({
@@ -366,7 +350,7 @@ function saveScore()
 
     localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
 }
-
+//Start the game
 function startGame()
 {
     let input = document.getElementById("playerName");
@@ -376,10 +360,8 @@ function startGame()
         alert("Enter your name!");
         return;
     }
-
     playerName = input.value;
-
-    // Reset game
+    // Reset game 
     gameOver = false;
     score = 0;
     x = 100;
@@ -402,7 +384,6 @@ function startGame()
     {
         bullet.element.remove();
     }
-
     enemies = [];
     playerprojectile = [];
     enemyBullets = [];
@@ -422,8 +403,8 @@ function startGame()
 
     requestAnimationFrame(gameLoop);
 }
-
-    function showLeaderboard()
+//Showing the leaderboard
+    function showLeaderboard() 
 {
     let list = document.getElementById("leaderboardList");
     list.innerHTML = "";
@@ -438,6 +419,5 @@ function startGame()
         list.appendChild(item);
     }
 }
-
 document.getElementById("startButton").addEventListener("click", startGame);
 showLeaderboard();
